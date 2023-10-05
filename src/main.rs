@@ -11,15 +11,13 @@ struct CliArg{
 }
 
 fn main() {
-    env_logger::Builder::new()
-        .target(env_logger::Target::Stdout)
-        .filter_level(log::LevelFilter::Info)
-        .init();
-
-    log::info!("Starting Ramono");
-
     let args = CliArg::parse();
 
+    env_logger::Builder::new()
+    .target(env_logger::Target::Stdout)
+    .filter_level(log::LevelFilter::Info)
+    .init();
+    log::info!("Starting Ramono");
 
 
     let memory_increment = args.memory_increment;

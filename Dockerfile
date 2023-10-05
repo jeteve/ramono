@@ -9,4 +9,5 @@ RUN strip target/x86_64-unknown-linux-musl/release/ramono
 
 FROM scratch
 COPY --from=builder /work/target/x86_64-unknown-linux-musl/release/ramono /ramono
-ENTRYPOINT [ "/ramono" ]
+ENTRYPOINT ["/ramono"]
+CMD ["--help"]
