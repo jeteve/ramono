@@ -4,7 +4,8 @@ WORKDIR /work/
 COPY . .
 # Compile everything statically
 RUN rustup target add x86_64-unknown-linux-musl
-RUN cargo build --release --target x86_64-unknown-linux-musl && strip target/x86_64-unknown-linux-musl/release/ramono /ramono
+RUN cargo build --release --target x86_64-unknown-linux-musl 
+RUN strip target/x86_64-unknown-linux-musl/release/ramono
 
 
 
