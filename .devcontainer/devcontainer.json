@@ -5,5 +5,12 @@
 			"version": "latest",
 			"profile": "default"
 		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mutantdino.resourcemonitor"
+			]
+		}
 	}
 }
