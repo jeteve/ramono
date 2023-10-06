@@ -3,6 +3,7 @@ use std::{time::Duration, thread};
 use clap::Parser;
 
 #[derive(Debug, Parser)]
+#[command(author, version, about, long_about = None)] // Read from `Cargo.toml`
 struct CliArg{
     #[clap(short = 'm', long = "mem-increment", default_value_t = 1000)]
     memory_increment: usize,
