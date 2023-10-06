@@ -13,6 +13,7 @@ jobs:
         uses: actions/checkout@v4
       -
         name: Docker meta
+        # See https://github.com/docker/metadata-action#usage
         id: meta
         uses: docker/metadata-action@v5
         with:
