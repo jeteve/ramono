@@ -2,6 +2,8 @@
 name = "ramono"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+repository = "https://github.com/jeteve/ramono"
 authors = ["Jerome Eteve <jerome@eteve.net>"]
 description = "Ramono greedily eats your resources"
 
