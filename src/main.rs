@@ -1,4 +1,4 @@
-use std::{time::Duration, thread, sync::{Arc, atomic::{AtomicBool, Ordering}}};
+use std::{time::Duration, thread, sync::{Arc, atomic::{AtomicBool, Ordering}}, env};
 
 
 use clap::Parser;
@@ -22,17 +22,21 @@ fn main() {
 
     let stop_me = stop.clone();
     ctrlc::set_handler(move || {
-        log::info!("received Ctrl-C");
+        log::debug!("received Ctrl-C");
         stop_me.store(true, Ordering::Relaxed );
     })
     .expect("Error setting Ctrl-C handler");
 
-    let args = CliArg::parse();
+    env_logger::Builder::new().parse_filters(env::var("RUST_LOG").unwrap_or(String::from("info")).as_str()).init();
 
-    env_logger::Builder::new()
+    let args = CliArg::parse();
+    log::debug!("{:?}", args);
+
+    /* env_logger::Builder::new()
     .target(env_logger::Target::Stdout)
     .filter_level(log::LevelFilter::Info)
     .init();
+*/
 
     log::info!("Starting Ramono");
 
@@ -43,9 +47,9 @@ fn main() {
 
     while ! stop.load(Ordering::Relaxed) {
         thread::sleep(one_second);
+        log::trace!("Tick");
         memory_hog.tick();
         files_hog.tick();
-        log::info!("Tick");
     }
     log::info!("Bye");
 }

@@ -1,5 +1,6 @@
 use std::{fs::File, io::Error};
 
+#[derive(Debug)]
 pub struct MemoryHog{
     increment: usize,
     limit: usize,
@@ -8,7 +9,9 @@ pub struct MemoryHog{
 
 impl MemoryHog{
     pub fn new(increment: usize, limit: usize) -> MemoryHog{
-        MemoryHog { increment, limit, mem_vector: vec![0; 0] }
+        let hog = MemoryHog { increment, limit, mem_vector: vec![0; 0] };
+        log::debug!("{:?}", hog);
+        hog
     }
     pub fn tick(&mut self) {
         if ! self.saturated() {
@@ -24,6 +27,7 @@ impl MemoryHog{
 }
 
 
+#[derive(Debug)]
 pub struct FileHandlesHog{
     increment: usize,
     limit: usize,
@@ -33,8 +37,9 @@ pub struct FileHandlesHog{
 
 impl FileHandlesHog{
     pub fn new(increment: usize, limit: usize) -> FileHandlesHog{
-        log::info!("Files will be generated in {}", std::env::temp_dir().to_string_lossy());
-        FileHandlesHog{increment, limit, files: Vec::new(), last_error: None}
+        let hog = FileHandlesHog{increment, limit, files: Vec::new(), last_error: None};
+        log::debug!("{:?}. Files will be generated in {}", hog, std::env::temp_dir().to_string_lossy());
+        hog
     }
 
 
