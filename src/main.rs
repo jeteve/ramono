@@ -1,4 +1,5 @@
-use std::{time::Duration, thread};
+use std::{time::Duration, thread, sync::{Arc, atomic::{AtomicBool, Ordering}}};
+
 
 use clap::Parser;
 
@@ -17,6 +18,15 @@ struct CliArg{
 }
 
 fn main() {
+    let stop = Arc::new(AtomicBool::new(false));
+
+    let stop_me = stop.clone();
+    ctrlc::set_handler(move || {
+        log::info!("received Ctrl-C");
+        stop_me.store(true, Ordering::Relaxed );
+    })
+    .expect("Error setting Ctrl-C handler");
+
     let args = CliArg::parse();
 
     env_logger::Builder::new()
@@ -31,9 +41,11 @@ fn main() {
 
     let one_second = Duration::from_secs(1);
 
-    loop{
+    while ! stop.load(Ordering::Relaxed) {
         thread::sleep(one_second);
         memory_hog.tick();
         files_hog.tick();
+        log::info!("Tick");
     }
+    log::info!("Bye");
 }

@@ -1,4 +1,4 @@
-use std::{fs::File, io::{Error}};
+use std::{fs::File, io::Error};
 
 pub struct MemoryHog{
     increment: usize,
