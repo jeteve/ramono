@@ -15,6 +15,13 @@ struct CliArg{
     file_increment: usize,
     #[clap(long = "file-limit", default_value_t = 1000 * 1000 * 1000 )]
     file_limit: usize,
+
+    #[clap( short = 'v',
+            long = "verbose-level" ,
+            default_value_t = String::from("info"),
+            value_parser = clap::builder::PossibleValuesParser::new(["trace", "debug", "info", "warn", "error"])
+     )]
+    verbose_level: String
 }
 
 fn main() {
@@ -27,9 +34,15 @@ fn main() {
     })
     .expect("Error setting Ctrl-C handler");
 
-    env_logger::Builder::new().parse_filters(env::var("RUST_LOG").unwrap_or(String::from("info")).as_str()).init();
-
     let args = CliArg::parse();
+    env_logger::Builder::new()
+        .parse_filters(
+                env::var("RUST_LOG")
+                .unwrap_or( args.verbose_level.clone() )
+                .as_str()
+        )
+        .init();
+
     log::debug!("{:?}", args);
 
     /* env_logger::Builder::new()
