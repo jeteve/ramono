@@ -8,6 +8,8 @@ authors = ["Jerome Eteve <jerome@eteve.net>"]
 description = "Ramono greedily eats your resources"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[profile.release]
+strip = true
 
 [dependencies]
 log = "0.4.20"
