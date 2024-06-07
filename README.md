@@ -59,5 +59,6 @@ cargo build --release --target x86_64-unknown-linux-musl
 
 For a minor version bump:
 ```sh
+ cargo install cargo-release
  cargo release -v --no-publish minor
 ```
