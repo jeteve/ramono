@@ -11,6 +11,7 @@ description = "Ramono greedily eats your resources"
 [profile.release]
 strip = true
 opt-level = "z"  # Optimize for size.
+lto = true # Link time optimisation https://llvm.org/docs/LinkTimeOptimization.html
 
 [dependencies]
 log = "0.4.20"
