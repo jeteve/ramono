@@ -9,9 +9,11 @@ description = "Ramono greedily eats your resources"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [profile.release]
-strip = true
-opt-level = "z"  # Optimize for size.
-lto = true # Link time optimisation https://llvm.org/docs/LinkTimeOptimization.html
+strip = true # 6 -> 2.2 Mo
+opt-level = "z"  # 2.2 -> 2Mo  Optimize for size.
+lto = true # 2Mo -> 1.6Mo Link time optimisation https://llvm.org/docs/LinkTimeOptimization.html
+codegen-units = 1 # 1.6 -> 1.5 Mo No parralel code units, improve optimisation to just one code unit
+panic = "abort" # 1.5 -> 1.4 Mo  Behaviour change.  https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles
 
 [dependencies]
 log = "0.4.20"
