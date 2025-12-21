@@ -34,6 +34,7 @@ impl CpuSecondsHog {
             counter: 0,
             busy_thread: Some(std::thread::spawn(move || {
                 loop {
+                    // message consuming loop.
                     // Wait for a tick to consume CPU seconds.
                     let m = rx.recv();
                     if m.is_err() {
@@ -42,9 +43,19 @@ impl CpuSecondsHog {
                     }
                     let busy_seconds = m.unwrap();
                     // We have received a tick. Get busy with the increment.
-                    // Busy loop for increment seconds.
-                    let start = std::time::Instant::now();
-                    while start.elapsed().as_secs() < busy_seconds as u64 {}
+                    // Consume one second per thread (the top tick loop is one second.)
+                    let mut consumers = vec![];
+                    for _ in 0..busy_seconds {
+                        consumers.push(std::thread::spawn(move || {
+                            let start = std::time::Instant::now();
+                            // Busy loop for 1second.
+                            while start.elapsed().as_millis() <= 1000 as u128 {}
+                        }));
+                    }
+                    for consumer in consumers {
+                        // Wait for them. That should not last more than one second.
+                        consumer.join().unwrap();
+                    }
                 }
             })),
         };

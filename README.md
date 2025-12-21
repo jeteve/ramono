@@ -9,6 +9,7 @@ For now ramono is capable of consuming:
 
 - RAM
 - File handles
+- CPU seconds
 
 Other types of resources will be implemented in future versions, with a focus on the resources
 that can be controlled with ```ulimit```.
@@ -29,6 +30,10 @@ Options:
           [default: 0]
       --file-limit <FILE_LIMIT>
           [default: 1000000000]
+      --cpus-increment <CPUS_INCREMENT>
+          [default: 0]
+      --cpus-limit <CPUS_LIMIT>
+          [default: 1000000000]
   -v, --verbose-level <VERBOSE_LEVEL>
           [default: info] [possible values: trace, debug, info, warn, error]
   -h, --help
@@ -36,6 +41,11 @@ Options:
   -V, --version
           Print version
 ```
+
+# About CPU seconds consumption
+
+The the option --cpus-increment <N> to consume roughly N seconds of CPU time every seconds. Every second, ramono will
+use N threads staying busy for one second to simulate the consumption of N cpu seconds. Use with caution.
 
 # Installing
 
