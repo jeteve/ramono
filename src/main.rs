@@ -1,27 +1,39 @@
-use std::{time::Duration, thread, sync::{Arc, atomic::{AtomicBool, Ordering}}, env};
-
+use std::{
+    env,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
+    thread,
+    time::Duration,
+};
 
 use clap::Parser;
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)] // Read from `Cargo.toml`
-struct CliArg{
+struct CliArg {
     #[clap(short = 'm', long = "mem-increment", default_value_t = 1000)]
     memory_increment: usize,
     #[clap(short = 'l', long = "mem-limit", default_value_t = 1000 * 1000 * 1000 )]
     memory_limit: usize,
 
-    #[clap(long = "file-increment", default_value_t = 0 )]
+    #[clap(long = "file-increment", default_value_t = 0)]
     file_increment: usize,
     #[clap(long = "file-limit", default_value_t = 1000 * 1000 * 1000 )]
     file_limit: usize,
+
+    #[clap(long = "cpus-increment", default_value_t = 0)]
+    cpus_increment: usize,
+    #[clap(long = "cpus-limit", default_value_t = 1000 * 1000 * 1000)]
+    cpus_limit: usize,
 
     #[clap( short = 'v',
             long = "verbose-level" ,
             default_value_t = String::from("info"),
             value_parser = clap::builder::PossibleValuesParser::new(["trace", "debug", "info", "warn", "error"])
      )]
-    verbose_level: String
+    verbose_level: String,
 }
 
 fn main() {
@@ -30,39 +42,41 @@ fn main() {
     let stop_me = stop.clone();
     ctrlc::set_handler(move || {
         log::debug!("received Ctrl-C");
-        stop_me.store(true, Ordering::Relaxed );
+        stop_me.store(true, Ordering::Relaxed);
     })
     .expect("Error setting Ctrl-C handler");
 
     let args = CliArg::parse();
     env_logger::Builder::new()
         .parse_filters(
-                env::var("RUST_LOG")
-                .unwrap_or( args.verbose_level.clone() )
-                .as_str()
+            env::var("RUST_LOG")
+                .unwrap_or(args.verbose_level.clone())
+                .as_str(),
         )
         .init();
 
     log::debug!("{:?}", args);
 
     /* env_logger::Builder::new()
-    .target(env_logger::Target::Stdout)
-    .filter_level(log::LevelFilter::Info)
-    .init();
-*/
+        .target(env_logger::Target::Stdout)
+        .filter_level(log::LevelFilter::Info)
+        .init();
+    */
 
     log::info!("Starting Ramono");
 
     let mut memory_hog = ramono::MemoryHog::new(args.memory_increment, args.memory_limit);
-    let mut files_hog = ramono::FileHandlesHog::new( args.file_increment , args.file_limit);
+    let mut files_hog = ramono::FileHandlesHog::new(args.file_increment, args.file_limit);
+    let mut cpu_seconds_hog = ramono::CpuSecondsHog::new(args.cpus_increment, args.cpus_limit);
 
     let one_second = Duration::from_secs(1);
 
-    while ! stop.load(Ordering::Relaxed) {
+    while !stop.load(Ordering::Relaxed) {
         thread::sleep(one_second);
         log::trace!("Tick");
         memory_hog.tick();
         files_hog.tick();
+        cpu_seconds_hog.tick();
     }
     log::info!("Bye");
 }
