@@ -45,6 +45,7 @@ impl CpuSecondsHog {
                     // We have received a tick. Get busy with the increment.
                     // Consume one second per thread (the top tick loop is one second.)
                     let mut consumers = vec![];
+                    log::trace!("Spawning {busy_seconds} threads");
                     for _ in 0..busy_seconds {
                         consumers.push(std::thread::spawn(move || {
                             let start = std::time::Instant::now();
@@ -52,6 +53,7 @@ impl CpuSecondsHog {
                             while start.elapsed().as_millis() <= 1000 as u128 {}
                         }));
                     }
+                    log::trace!("Joining {busy_seconds} threads");
                     for consumer in consumers {
                         // Wait for them. That should not last more than one second.
                         consumer.join().unwrap();
@@ -65,7 +67,7 @@ impl CpuSecondsHog {
     pub fn tick(&mut self) {
         if !self.saturated() {
             // Ask the thread to consume increment CPU seconds.
-            log::trace!("CPU counter={}", self.counter);
+            log::trace!("CPU seconds counter={}", self.counter);
             let _ = self.tx_thread.as_ref().unwrap().send(self.increment);
             self.counter += self.increment;
         } else {
